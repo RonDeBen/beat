@@ -19,7 +19,7 @@ public class Sheet : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	   GenerateFakeNotes(1);
+        GenerateFakeNotes(1);
 	}
 	
 	// Update is called once per frame
@@ -37,10 +37,6 @@ public class Sheet : MonoBehaviour {
             }
         }
         return null;
-    }
-
-    private void infiniteNotes(){
-
     }
 
     private void GenerateFakeNotes(int numberOfNotes){
@@ -103,8 +99,8 @@ public class Sheet : MonoBehaviour {
         }
         if(gauss < noteQuantityWeight * 2){//2 standard deviations above
             return RandomNotes(2);
-        }//3 or more standard deviations
-        if(gauss < noteQuantityWeight * 3){
+        }
+        if(gauss < noteQuantityWeight * 3){//3 or more standard deviations
             return RandomNotes(3);
         }
         return RandomNotes(4);

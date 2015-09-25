@@ -10,16 +10,27 @@ public class Channel : MonoBehaviour {
     public GameObject runner, hurdle, enemy;
 
     private float leftCenter, middleCenter, rightCenter;
+    private LaneController leftController, middleController, rightController;
 
     private RunnerController runnerController;
 
     private Vector3 hurdlePos;
     private float hurdleSpeed;
 
+    public Color endColor;
+    public float cycleTime;
+
 	// Use this for initialization
 	void Start () {
 	   runnerController = runner.GetComponent<RunnerController>();
 
+       leftController = leftLane.GetComponent<LaneController>() as LaneController;
+       middleController = middleLane.GetComponent<LaneController>() as LaneController;
+       rightController = rightLane.GetComponent<LaneController>() as LaneController;
+
+       leftController.SetUpLane(leftLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), endColor, cycleTime);
+       middleController.SetUpLane(middleLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), endColor, cycleTime);
+       rightController.SetUpLane(rightLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), endColor, cycleTime);
 	}
 	
 	// Update is called once per frame
@@ -36,10 +47,11 @@ public class Channel : MonoBehaviour {
     }
 
     public void RunnerSwapLane(float knob){
+        runnerController.SetArrowPosition(knob);
         if (knob != 0.0f){
-            if (knob < 0.40f){
+            if (knob < 0.33f){
                 runnerController.SwapLane(leftLane.transform.position.x);
-            } else if (knob < 0.60f){
+            } else if (knob < 0.66f){
                 runnerController.SwapLane(middleLane.transform.position.x);
             } else {
                 runnerController.SwapLane(rightLane.transform.position.x);
@@ -50,15 +62,22 @@ public class Channel : MonoBehaviour {
     public void SpawnEnemy(int position){
         Vector3 enemyPos = hurdlePos;
         enemyPos.y += enemy.transform.localScale.y / 2;
+        LaneController LC = middleController;
         switch(position){
             case 1:
                 enemyPos.x = leftLane.transform.position.x;
+                leftController.StartFlashing();
+                LC = leftController;
                 break;
             case 2:
                 enemyPos.x = middleLane.transform.position.x;
+                middleController.StartFlashing();
+                LC = middleController;
                 break;
             case 3:
                 enemyPos.x = rightLane.transform.position.x;
+                rightController.StartFlashing();
+                LC = rightController;
                 break;
         }
 
@@ -69,7 +88,8 @@ public class Channel : MonoBehaviour {
         float y = Mathf.Sin(theta);
         float z = -Mathf.Cos(theta);
 
-        go.GetComponent<Rigidbody>().velocity = new Vector3(0, y, z) * (hurdleSpeed / 2);
+        go.GetComponent<Rigidbody>().velocity = new Vector3(0, y, z) * (hurdleSpeed / 3);
+        go.GetComponent<EnemyController>().SetLaneController(LC);
     }
 
     public void SpawnHurdle(){

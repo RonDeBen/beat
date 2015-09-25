@@ -5,8 +5,9 @@ public class RunnerController : MonoBehaviour {
 
     public float highestPoint;
     public float bulletSpeed;
-    private float grav, velocity, floor;
-    public GameObject metronomeObj, bullet;
+    public float secondsIndicatorLasts;
+    private float grav, velocity, floor, timeToRemoveIndicator, lastArrowKnob;
+    public GameObject metronomeObj, bullet, radialIndicator, arrow;
     private Metronome metronome;
 
     private bool jumping = false;
@@ -20,6 +21,12 @@ public class RunnerController : MonoBehaviour {
 
         velocity = (4f*highestPoint)/beat;
         grav = (-velocity) / beat;
+    }
+
+    void Update(){
+        if(Time.time > timeToRemoveIndicator){
+            indicatorShouldBeVisible(false);
+        }
     }
 
 	public void Jump(){
@@ -48,6 +55,20 @@ public class RunnerController : MonoBehaviour {
         Vector3 newPosition = gameObject.transform.position;
         newPosition.x = newX;
         gameObject.transform.position = newPosition;
+    }
+
+    public void SetArrowPosition(float knob){
+        if(Mathf.Abs(knob - lastArrowKnob) > 0.001){
+            indicatorShouldBeVisible(true);
+            lastArrowKnob = knob;
+            timeToRemoveIndicator = Time.time + secondsIndicatorLasts;
+            arrow.transform.eulerAngles = new Vector3(0f, 0f, -knob * 270 + 45);
+        }
+    }
+
+    private void indicatorShouldBeVisible(bool truth){
+        radialIndicator.GetComponent<SpriteRenderer>().enabled = truth;
+        arrow.GetComponent<SpriteRenderer>().enabled = truth;
     }
 
     void FixedUpdate(){

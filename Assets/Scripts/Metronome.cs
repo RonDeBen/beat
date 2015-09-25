@@ -6,7 +6,7 @@ public class Metronome : MonoBehaviour {
     public int _beatsPerMinute;
     public int _beatsPerMeasure;
 
-    public GameObject SheetObj, firstChannelObj, secondChannelObj, thirdChannelObj, fourthChannelObj;
+    public GameObject sheetObj, firstChannelObj, secondChannelObj, thirdChannelObj, fourthChannelObj;
     private Channel firstChannel, secondChannel, thirdChannel, fourthChannel;
 
     private float beat, nextBeat;
@@ -17,7 +17,7 @@ public class Metronome : MonoBehaviour {
 	void Awake () {
         beat = 1f / (_beatsPerMinute / 60f);
 
-        sheet = SheetObj.GetComponent<Sheet>();
+        sheet = sheetObj.GetComponent<Sheet>();
 
         firstChannel = firstChannelObj.GetComponent<Channel>();
         secondChannel = secondChannelObj.GetComponent<Channel>();
