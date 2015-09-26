@@ -9,11 +9,11 @@ public class UserController : MonoBehaviour {
     public GameObject fourthChannelObj;
 
     public GameObject sheetObj;
-    public GameObject MetronomeObj;
 
     private Channel firstChannel, secondChannel, thirdChannel, fourthChannel;
     private Sheet sheet;
-    private Metronome metronome;
+
+    private MusicMiddleware MM;
 	
     void Start(){
         firstChannel = firstChannelObj.GetComponent<Channel>();
@@ -22,7 +22,8 @@ public class UserController : MonoBehaviour {
         fourthChannel = fourthChannelObj.GetComponent<Channel>();
 
         sheet = sheetObj.GetComponent<Sheet>();
-        metronome = MetronomeObj.GetComponent<Metronome>();
+
+        MM = gameObject.GetComponent<MusicMiddleware>() as MusicMiddleware;
     }
 
 
@@ -41,29 +42,37 @@ public class UserController : MonoBehaviour {
        //jumping
        if (firstJump){
         firstChannel.RunnerJump();
+        MM.playSound("Square Jump 1");
        }
        if (secondJump){
         secondChannel.RunnerJump();
+        MM.playSound("Square Jump 2");
        }
        if (thirdJump){
         thirdChannel.RunnerJump();
+        MM.playSound("Triangle Jump");
        }
        if (fourthJump){
         fourthChannel.RunnerJump();
+        MM.playSound("Noise Jump");
        }
 
        //shooting
        if (firstShoot){
         firstChannel.RunnerShoot();
+        MM.playSound("Square Shot 1");
        }
        if (secondShoot){
         secondChannel.RunnerShoot();
+        MM.playSound("Square Shot 2");
        }
        if (thirdShoot){
         thirdChannel.RunnerShoot();
+        MM.playSound("Triangle Shot");
        }
        if (fourthShoot){
         fourthChannel.RunnerShoot();
+        MM.playSound("Noise Shot");
        }
 
        //lane swapping
@@ -71,10 +80,5 @@ public class UserController : MonoBehaviour {
        secondChannel.RunnerSwapLane(MidiInput.GetKnob(2));
        thirdChannel.RunnerSwapLane(MidiInput.GetKnob(3));
        fourthChannel.RunnerSwapLane(MidiInput.GetKnob(4));
-
-       // sheet.SetBeatNumberWeight((MidiInput.GetKnob(5) - 0.5f ) * 6);
-       // sheet.SetNoteQuantityWeight((MidiInput.GetKnob(6) - 0.5f) * 6);
-       // sheet.SetEnemySpawnWeight((MidiInput.GetKnob(7) - 0.5f) * 6);
-       metronome.setBPM((int)MidiInput.GetKnob(8)*180);
 	}
 }

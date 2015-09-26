@@ -17,8 +17,13 @@ public class Channel : MonoBehaviour {
     private Vector3 hurdlePos;
     private float hurdleSpeed;
 
-    public Color endColor;
+    public Color hurdleColor;
+    public Color jumpedOverColor;
+
+    public Color flashingColor;
     public float cycleTime;
+
+    private string channel;
 
 	// Use this for initialization
 	void Start () {
@@ -28,15 +33,21 @@ public class Channel : MonoBehaviour {
        middleController = middleLane.GetComponent<LaneController>() as LaneController;
        rightController = rightLane.GetComponent<LaneController>() as LaneController;
 
-       leftController.SetUpLane(leftLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), endColor, cycleTime);
-       middleController.SetUpLane(middleLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), endColor, cycleTime);
-       rightController.SetUpLane(rightLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), endColor, cycleTime);
+       leftController.SetUpLane(leftLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), flashingColor, cycleTime);
+       middleController.SetUpLane(middleLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), flashingColor, cycleTime);
+       rightController.SetUpLane(rightLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), flashingColor, cycleTime);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
 	}
+
+    public void BecomeInfected(){
+        // leftLane.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.black);
+        // middleLane.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.black);
+        // rightLane.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.black);
+    }
 
     public void RunnerJump(){
         runnerController.Jump();
@@ -89,7 +100,7 @@ public class Channel : MonoBehaviour {
         float z = -Mathf.Cos(theta);
 
         go.GetComponent<Rigidbody>().velocity = new Vector3(0, y, z) * (hurdleSpeed / 3);
-        go.GetComponent<EnemyController>().SetLaneController(LC);
+        go.GetComponent<EnemyController>().SetLaneController(LC, channel);
     }
 
     public void SpawnHurdle(){
@@ -101,6 +112,8 @@ public class Channel : MonoBehaviour {
         float z = -Mathf.Cos(theta);
 
         go.GetComponent<Rigidbody>().velocity = new Vector3(0, y, z) * hurdleSpeed;
+        go.GetComponent<Renderer>().material.SetColor("_EmissionColor", hurdleColor);
+        go.GetComponent<HurdleController>().SetupHurdle(runner.transform.position, jumpedOverColor, Color.white, Color.magenta, cycleTime);
     }
 
     public void SetDimensions(float laneWidth, float laneHeight){
@@ -139,6 +152,10 @@ public class Channel : MonoBehaviour {
 
     public float GetChannelHeight(){
         return middleLane.transform.localScale.y;
+    }
+
+    public void SetChannel(string channel){
+        this.channel = channel;
     }
 
 

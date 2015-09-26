@@ -4,22 +4,24 @@ using System.Collections;
 public class EnemyController : MonoBehaviour {
 
     private LaneController LC;
+    private string channel = "first";
 
 	// Use this for initialization
 	void Start () {
 	
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
     void OnDestroy(){
+        Score.EnemyPoints();
         LC.StopFlashing();
     }
 
-    public void SetLaneController(LaneController LC){
+    void OnBecameInvisible(){
+        ChannelManager.infectChannel(channel);
+    }
+
+    public void SetLaneController(LaneController LC, string channel){
         this.LC = LC;
+        this.channel = channel;
     }
 }
