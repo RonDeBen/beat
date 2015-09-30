@@ -9,7 +9,6 @@ public class RunnerController : MonoBehaviour {
     private float grav, velocity, floor, timeToRemoveIndicator, lastArrowKnob;
     public GameObject metronomeObj, bullet, radialIndicator, arrow;
     private Metronome metronome;
-    private MusicMiddleware MM;
 
     private bool jumping = false;
     private float jumpStartTime, jumpNought, beat;
@@ -18,7 +17,6 @@ public class RunnerController : MonoBehaviour {
         floor = gameObject.transform.position.y;
 
         metronome = metronomeObj.GetComponent<Metronome>();
-        MM = gameObject.GetComponent<MusicMiddleware>();
         beat = metronome.GetBeat();
 
         velocity = (4f*highestPoint)/beat;
@@ -83,9 +81,5 @@ public class RunnerController : MonoBehaviour {
             }
             gameObject.transform.position = new Vector3(gameObject.transform.position.x, jumpPos, gameObject.transform.position.z);
         }
-    }
-
-    void OnCollisionEnter(){
-        MM.playSound("Hurdle Collision");
     }
 }

@@ -19,11 +19,17 @@ public class Channel : MonoBehaviour {
 
     public Color hurdleColor;
     public Color jumpedOverColor;
+    private Color laneColor;
 
     public Color flashingColor;
     public float cycleTime;
 
     private string channel;
+
+    public float infectionLength, flashLength;
+    public int numberOfFlashes;
+    private bool infected, healing;
+    private float recoveryTime;
 
 	// Use this for initialization
 	void Start () {
@@ -36,6 +42,8 @@ public class Channel : MonoBehaviour {
        leftController.SetUpLane(leftLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), flashingColor, cycleTime);
        middleController.SetUpLane(middleLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), flashingColor, cycleTime);
        rightController.SetUpLane(rightLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), flashingColor, cycleTime);
+
+       laneColor = leftLane.GetComponent<Renderer>().material.GetColor("_EmissionColor");
 	}
 	
 	// Update is called once per frame
@@ -43,10 +51,57 @@ public class Channel : MonoBehaviour {
 
 	}
 
+    void FixedUpdate(){
+        if(infected && Time.time > recoveryTime && !healing){
+            BecomeUninfected();
+        }
+    }
+
+    public bool IsInfected(){
+        return infected;
+    }
+
     public void BecomeInfected(){
-        // leftLane.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.black);
-        // middleLane.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.black);
-        // rightLane.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.black);
+        infected = true;
+        healing = false;
+        recoveryTime = Time.time + infectionLength;
+
+        leftLane.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.black);
+        middleLane.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.black);
+        rightLane.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.black);
+
+        leftController.SetInfected(true);
+        middleController.SetInfected(true);
+        rightController.SetInfected(true);
+    }
+
+    public void BecomeUninfected(){
+        healing = true;
+        StartCoroutine(Flash());
+    }
+
+    IEnumerator Flash() {
+
+        Material leftMat = leftLane.GetComponent<Renderer>().material;
+        Material middleMat = middleLane.GetComponent<Renderer>().material;
+        Material rightMat = rightLane.GetComponent<Renderer>().material;
+
+        for(int k = 0; k < numberOfFlashes; k++){
+            leftMat.SetColor("_EmissionColor", Color.black);
+            middleMat.SetColor("_EmissionColor", Color.black);
+            rightMat.SetColor("_EmissionColor", Color.black);
+            yield return new WaitForSeconds(flashLength);
+            leftMat.SetColor("_EmissionColor", laneColor);
+            middleMat.SetColor("_EmissionColor", laneColor);
+            rightMat.SetColor("_EmissionColor", laneColor);
+            yield return new WaitForSeconds(flashLength);
+        }
+
+        infected = false;
+
+        leftController.SetInfected(false);
+        middleController.SetInfected(false);
+        rightController.SetInfected(false);
     }
 
     public void RunnerJump(){
@@ -113,7 +168,7 @@ public class Channel : MonoBehaviour {
 
         go.GetComponent<Rigidbody>().velocity = new Vector3(0, y, z) * hurdleSpeed;
         go.GetComponent<Renderer>().material.SetColor("_EmissionColor", hurdleColor);
-        go.GetComponent<HurdleController>().SetupHurdle(runner.transform.position, jumpedOverColor, Color.white, Color.magenta, cycleTime);
+        go.GetComponent<HurdleController>().SetupHurdle(runner.transform.position, jumpedOverColor, laneColor, Color.magenta, cycleTime, infected);
     }
 
     public void SetDimensions(float laneWidth, float laneHeight){

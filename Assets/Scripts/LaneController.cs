@@ -8,14 +8,16 @@ public class LaneController : MonoBehaviour {
     private bool isFlashing = false;
     private Material laneMat;
 
+    private bool infected;
+
     void Start(){
         laneMat = gameObject.GetComponent<Renderer>().material;
     }
 
     void FixedUpdate(){
-        if (isFlashing){
-            float oscillation = ((Time.time - cycleStartTime) % cycleTime) / cycleTime;
-            float wave = Mathf.Sin(Mathf.PI*oscillation);
+        if (isFlashing && !infected){
+            float oscillation = (Time.time - cycleStartTime) / cycleTime;
+            float wave = Mathf.Abs(Mathf.Sin(Mathf.PI*oscillation));
             laneMat.SetColor("_EmissionColor", Color.Lerp(startColor, endColor, wave));
         }
     }
@@ -32,8 +34,15 @@ public class LaneController : MonoBehaviour {
     }
 
     public void StopFlashing(){
+        if(!infected){
+            isFlashing = false;
+            laneMat.SetColor("_EmissionColor", startColor);
+        }
+    }
+
+    public void SetInfected(bool isInfected){
+        infected = isInfected;
         isFlashing = false;
-        laneMat.SetColor("_EmissionColor", startColor);
     }
 
 }

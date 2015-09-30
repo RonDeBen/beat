@@ -29,6 +29,11 @@ public class Metronome : MonoBehaviour {
         thirdChannel.SetUpHurdles(_beatsPerMeasure, beat);
         fourthChannel.SetUpHurdles(_beatsPerMeasure, beat);
 	}
+
+    void Start(){
+        Debug.Log("Metronome Start");
+        StartCoroutine(WaitForFirstNote());
+    }
 	
 	void Update () {
 	   if (Time.time > nextBeat){
@@ -40,6 +45,16 @@ public class Metronome : MonoBehaviour {
 
     void Tick(int beatNumber){
         ChannelTryToSpawnHurdle(sheet.NoteForBeat(beatNumber));
+    }
+
+    IEnumerator WaitForFirstNote(){
+        Debug.Log("First note will start in " + beat + " seconds");
+        yield return new WaitForSeconds(beat);
+        StartFakeMusic();
+    }
+
+    public void StartFakeMusic(){
+        sheet.StartFakeMusic();
     }
 
     public void ChannelTryToSpawnHurdle(Note currentNote){
@@ -64,8 +79,8 @@ public class Metronome : MonoBehaviour {
 
     private void SpawnRandomEnemy(){
         int channel = Random.Range(1, 4);
-        // int position = Random.Range(1, 3);
-        int position = 2;
+        int position = Random.Range(1, 3);
+        // int position = 2;
         switch(channel){
             case 1:
                 firstChannel.SpawnEnemy(position);

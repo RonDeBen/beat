@@ -12,6 +12,8 @@ public class HurdleController : MonoBehaviour {
     private bool isFlashing = false;
     private Material hurdleMat;
 
+    private bool infected;
+
 
 	// Use this for initialization
 	void Start () {
@@ -29,8 +31,8 @@ public class HurdleController : MonoBehaviour {
             }
        }
        if (isFlashing){
-            float oscillation = ((Time.time - cycleStartTime) % cycleTime) / cycleTime;
-            float wave = Mathf.Sin(Mathf.PI*oscillation);
+            float oscillation = ((Time.time - cycleStartTime)) / cycleTime;
+            float wave = Mathf.Abs(Mathf.Sin(Mathf.PI*oscillation));
             hurdleMat.SetColor("_EmissionColor", Color.Lerp(startColor, endColor, wave));
        }
 	}
@@ -39,16 +41,21 @@ public class HurdleController : MonoBehaviour {
         return (gameObject.transform.position.y - depth > runnerPos.y);
     }
 
-    public void SetupHurdle(Vector3 runnerPos, Color jumpedOverColor, Color startColor, Color endColor, float cycleTime){
+    public void SetupHurdle(Vector3 runnerPos, Color jumpedOverColor, Color startColor, Color endColor, float cycleTime, bool infected){
         this.runnerPos = runnerPos;
         this.jumpedOverColor = jumpedOverColor;
         this.startColor = startColor;
         this.endColor = endColor;
         this.cycleTime = cycleTime;
+        this.infected = infected;
     }
 
     void OnCollisionEnter(){
-        Score.ResetCombo();
+        if(!infected){
+            Score.ResetCombo();
+            MusicMiddleware.playSound("Hurdle Collision");
+        }
+
         gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", jumpedOverColor); 
         Rigidbody body = gameObject.GetComponent<Rigidbody>() as Rigidbody;
         body.useGravity = true;
@@ -60,7 +67,7 @@ public class HurdleController : MonoBehaviour {
         cycleStartTime = Time.time;
     }
 
-    void OnBecomeInvisible(){
+    void OnBecameInvisibile(){
         Destroy(gameObject);
     }
 }

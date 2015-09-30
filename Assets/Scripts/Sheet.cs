@@ -13,18 +13,28 @@ public class Sheet : MonoBehaviour {
     public float noteQuantityWeight = 1f;
     public float enemySpawnWeight = 2f;
     public int secondsToWait = 1;
+
+    public bool fuck = true;
+    public GameObject musicAnalyzer;
+
     public List<IndexedNote> notes;
 
     private int lastBeat;
+    private MusicAnalyzer analyzer;
 
 	// Use this for initialization
 	void Start () {
-        GenerateFakeNotes(1);
+        analyzer = musicAnalyzer.GetComponent<MusicAnalyzer>() as MusicAnalyzer;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	}
+
+    public void StartFakeMusic(){
+        analyzer.StartFakeMusic();
+        GenerateFakeNotes(1);
+    }
 
     public Note NoteForBeat(int currentBeat){
         foreach(IndexedNote note in notes){
@@ -46,10 +56,12 @@ public class Sheet : MonoBehaviour {
     }
 
     private void AddFakeNoteToList(){
-        IndexedNote newNote = new IndexedNote();
-        newNote.beatNumber = GenerateBeatNumber(NextGaussianFloat());
-        newNote.note = GenerateNote(NextGaussianFloat());
-        notes.Add(newNote);
+        if(fuck){
+            IndexedNote newNote = new IndexedNote();
+            newNote.beatNumber = GenerateBeatNumber(NextGaussianFloat());
+            newNote.note = GenerateNote(NextGaussianFloat());
+            notes.Add(newNote);
+        }
     }
 
     private static float NextGaussianFloat(){
@@ -106,11 +118,61 @@ public class Sheet : MonoBehaviour {
         return RandomNotes(4);
     }
 
+    // private Note RandomNotes(int numberOfNotes){
+    //     Note note = new Note();
+    //     List<int> possibilities = ChannelManager.ChannelPossibilities();
+    //     numberOfNotes = Mathf.Clamp(numberOfNotes, 1, possibilities.Count);
+    //     for(int k = 0; k < numberOfNotes; k++){
+    //         int selectedPossibility = Random.Range(0, possibilities.Count);
+    //         switch(selectedPossibility){
+    //             case 0:
+    //                 note.square1 = true;
+    //                 break;
+    //             case 1:
+    //                 note.square2 = true;
+    //                 break;
+    //             case 2:
+    //                 note.triangle = true;
+    //                 break;
+    //             case 3:
+    //                 note.noise = true;
+    //                 break;
+    //         }
+    //         possibilities.RemoveAt(selectedPossibility);
+    //     }
+    //     note.enemy = ShouldAnEnemySpawn(NextGaussianFloat());
+    //     return note;
+    // }
+
     private Note RandomNotes(int numberOfNotes){
         Note note = new Note();
-        List<int> possibilities = new List<int>(new int[] { 0, 1, 2, 3 });
-        for(int k = 0; k < numberOfNotes; k++){
-            int selectedPossibility = Random.Range(0, possibilities.Count);
+        numberOfNotes = Mathf.Clamp(numberOfNotes, 1, ChannelManager.NumberOfPossibilities());
+        note.enemy = ShouldAnEnemySpawn(NextGaussianFloat());
+        List<int> possibilities = analyzer.DeltaWavePossibilities();
+        if(possibilities.Count >= numberOfNotes){
+            return IncludeHurdlesFromArray(note, possibilities, numberOfNotes);
+        }
+        note = IncludeHurdlesFromArray(note, possibilities, possibilities.Count);
+        numberOfNotes -= possibilities.Count;
+        // possibilities = possibilities.Except(ChannelManager.ChannelPossibilities());
+        possibilities = FuckYou(ChannelManager.ChannelPossibilities(), possibilities);
+        return IncludeHurdlesFromArray(note, possibilities, numberOfNotes);
+
+    }
+
+    private List<int> FuckYou(List<int> firstList, List<int> secondList){
+        for(int k = 0; k < secondList.Count; k++){
+            if(firstList.Contains(secondList[k])){
+                firstList.Remove(secondList[k]);
+            }
+        }
+        return firstList;
+    }
+
+    private Note IncludeHurdlesFromArray(Note note, List<int> possibilities, int numberOfHurdles){
+        for(int k = 0; k < numberOfHurdles; k++){
+            int index = Random.Range(0, possibilities.Count);
+            int selectedPossibility = possibilities[index];
             switch(selectedPossibility){
                 case 0:
                     note.square1 = true;
@@ -125,11 +187,12 @@ public class Sheet : MonoBehaviour {
                     note.noise = true;
                     break;
             }
-            possibilities.RemoveAt(selectedPossibility);
+            possibilities.RemoveAt(index);
         }
-        note.enemy = ShouldAnEnemySpawn(NextGaussianFloat());
         return note;
     }
+
+
 
     private bool ShouldAnEnemySpawn(float gauss){
         return Mathf.Abs(gauss) > enemySpawnWeight;

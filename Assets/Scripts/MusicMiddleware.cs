@@ -12,14 +12,18 @@ public class MusicMiddleware : MonoBehaviour {
         public AudioSource source;
         [HideInInspector]
         public bool looping = false;
+        public float volume = 1;
         public float loopStartTime;
         public float loopEndTime;
     }
     private SoundEntry playEntry;
     public List<SoundEntry> sounds; 
 
-    public void playSound(string name){
-        SoundEntry playEntry = sounds.Find(item => item.sound.name == name);
+    private static List<SoundEntry> staticSounds;
+
+    public static void playSound(string name){
+        SoundEntry playEntry = staticSounds.Find(item => item.sound.name == name);
+        playEntry.source.volume = playEntry.volume;
         playEntry.source.Play();
     }
 
@@ -69,6 +73,8 @@ public class MusicMiddleware : MonoBehaviour {
                 sound.loopEndTime = sound.source.clip.length;
             sound.looping = false;
         }
+
+        staticSounds = sounds;
     }
 
     void Update(){

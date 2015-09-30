@@ -8,22 +8,13 @@ public class UserController : MonoBehaviour {
     public GameObject thirdChannelObj;
     public GameObject fourthChannelObj;
 
-    public GameObject sheetObj;
-
     private Channel firstChannel, secondChannel, thirdChannel, fourthChannel;
-    private Sheet sheet;
-
-    private MusicMiddleware MM;
 	
     void Start(){
         firstChannel = firstChannelObj.GetComponent<Channel>();
         secondChannel = secondChannelObj.GetComponent<Channel>();
         thirdChannel = thirdChannelObj.GetComponent<Channel>();
         fourthChannel = fourthChannelObj.GetComponent<Channel>();
-
-        sheet = sheetObj.GetComponent<Sheet>();
-
-        MM = gameObject.GetComponent<MusicMiddleware>() as MusicMiddleware;
     }
 
 
@@ -38,41 +29,60 @@ public class UserController : MonoBehaviour {
        bool thirdShoot = MidiInput.GetKeyDown(42) || Input.GetKeyDown(KeyCode.E);
        bool fourthShoot = MidiInput.GetKeyDown(43) || Input.GetKeyDown(KeyCode.R);
 
+       bool firstInfect = Input.GetKeyDown(KeyCode.Z);
+       bool secondInfect = Input.GetKeyDown(KeyCode.X);
+       bool thirdInfect = Input.GetKeyDown(KeyCode.C);
+       bool fourthInfect = Input.GetKeyDown(KeyCode.V);
+
 
        //jumping
-       if (firstJump){
-        firstChannel.RunnerJump();
-        MM.playSound("Square Jump 1");
+       if (firstJump && !firstChannel.IsInfected()){
+          firstChannel.RunnerJump();
+          MusicMiddleware.playSound("Square Jump 1");
        }
-       if (secondJump){
-        secondChannel.RunnerJump();
-        MM.playSound("Square Jump 2");
+       if (secondJump && !secondChannel.IsInfected()){
+          secondChannel.RunnerJump();
+          MusicMiddleware.playSound("Square Jump 2");
        }
-       if (thirdJump){
-        thirdChannel.RunnerJump();
-        MM.playSound("Triangle Jump");
+       if (thirdJump && !thirdChannel.IsInfected()){
+          thirdChannel.RunnerJump();
+          MusicMiddleware.playSound("Triangle Jump");
        }
-       if (fourthJump){
-        fourthChannel.RunnerJump();
-        MM.playSound("Noise Jump");
+       if (fourthJump && !fourthChannel.IsInfected()){
+          fourthChannel.RunnerJump();
+          MusicMiddleware.playSound("Noise Jump");
        }
 
        //shooting
-       if (firstShoot){
-        firstChannel.RunnerShoot();
-        MM.playSound("Square Shot 1");
+       if (firstShoot && !firstChannel.IsInfected()){
+          firstChannel.RunnerShoot();
+          MusicMiddleware.playSound("Square Shot 1");
        }
-       if (secondShoot){
-        secondChannel.RunnerShoot();
-        MM.playSound("Square Shot 2");
+       if (secondShoot && !secondChannel.IsInfected()){
+          secondChannel.RunnerShoot();
+          MusicMiddleware.playSound("Square Shot 2");
        }
-       if (thirdShoot){
-        thirdChannel.RunnerShoot();
-        MM.playSound("Triangle Shot");
+       if (thirdShoot && !thirdChannel.IsInfected()){
+          thirdChannel.RunnerShoot();
+          MusicMiddleware.playSound("Triangle Shot");
        }
-       if (fourthShoot){
-        fourthChannel.RunnerShoot();
-        MM.playSound("Noise Shot");
+       if (fourthShoot && !fourthChannel.IsInfected()){
+          fourthChannel.RunnerShoot();
+          MusicMiddleware.playSound("Noise Shot");
+       }
+
+       //infecting
+       if(firstInfect){
+          firstChannel.BecomeInfected();
+       }
+       if(secondInfect){
+        secondChannel.BecomeInfected();
+       }
+       if(thirdInfect){
+        thirdChannel.BecomeInfected();
+       }
+       if(fourthInfect){
+        fourthChannel.BecomeInfected();
        }
 
        //lane swapping
