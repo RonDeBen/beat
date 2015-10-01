@@ -13,6 +13,10 @@ public class RunnerController : MonoBehaviour {
     private bool jumping = false;
     private float jumpStartTime, jumpNought, beat;
 
+    private string shotSound;
+
+    private Animator anim;
+
     void Start(){
         floor = gameObject.transform.position.y;
 
@@ -21,6 +25,8 @@ public class RunnerController : MonoBehaviour {
 
         velocity = (4f*highestPoint)/beat;
         grav = (-velocity) / beat;
+
+        anim = gameObject.GetComponent<Animator>();
     }
 
     void Update(){
@@ -37,6 +43,16 @@ public class RunnerController : MonoBehaviour {
     }
 
     public void Shoot(){
+        StartCoroutine(AnimatedShooting());
+    }
+
+    public IEnumerator AnimatedShooting(){
+        anim.CrossFade("Shoot", 0.45f);
+
+        yield return new WaitForSeconds(0.5f);
+
+        MusicMiddleware.playSound(shotSound);
+
         Vector3 bulletPos = gameObject.transform.position;
         float theta = 40;
 
@@ -45,6 +61,9 @@ public class RunnerController : MonoBehaviour {
 
         GameObject go = Instantiate(bullet, bulletPos, bullet.transform.rotation) as GameObject;
         go.GetComponent<Rigidbody>().velocity = new Vector3(0, y, z) * -bulletSpeed;
+
+        yield return new WaitForSeconds(0.25f);
+        anim.CrossFade("Idle", 0.1f);
     }
 
     public void SetRunnerPos(Vector3 newX){
@@ -81,5 +100,13 @@ public class RunnerController : MonoBehaviour {
             }
             gameObject.transform.position = new Vector3(gameObject.transform.position.x, jumpPos, gameObject.transform.position.z);
         }
+    }
+
+    public bool IsJumping(){
+        return jumping;
+    }
+
+    public void SetShotNoise(string shotSound){
+        this.shotSound = shotSound;
     }
 }

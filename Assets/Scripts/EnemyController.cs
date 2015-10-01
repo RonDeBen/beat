@@ -9,7 +9,10 @@ public class EnemyController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+	   SpriteRenderer sprender = gameObject.GetComponent<SpriteRenderer>();
+       Vector3 newPosition = gameObject.transform.position;
+       newPosition.y += sprender.bounds.size.y / 2;
+       gameObject.transform.position = newPosition;
 	}
 
     void OnBecameInvisible(){

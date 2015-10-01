@@ -25,10 +25,9 @@ public class MusicAnalyzer : MonoBehaviour {
 
     public AudioClip square1Clip, square2Clip, triangleClip, noiseClip;
     private SoundWave square1, square2, triangle, noise;
-    private AudioSource square1Music, square2Music, triangleMusic, noiseMusic;
+    [HideInInspector]
+    public static AudioSource square1Music, square2Music, triangleMusic, noiseMusic;
 
-    // Converted from UnityScript to C# at http://www.M2H.nl/files/js_to_c.php - by Mike Hergaarden
-    // Do test the code! You usually need to change a few small bits.
      int qSamples = 1024;  // array size
      float refValue = 0.1f; // RMS value for 0 dB
      float threshold = 0.02f;      // minimum amplitude to extract pitch
@@ -111,11 +110,44 @@ public class MusicAnalyzer : MonoBehaviour {
      }
 
      public void StartFakeMusic(){
-        Debug.Log("ayy");
         square1.source.Play();
         square2.source.Play();
         triangle.source.Play();
         noise.source.Play();
+     }
+
+     public static void MuteChannel(string channel){
+        switch(channel){
+            case "first":
+                square1Music.mute = true;
+                break;
+            case "second":
+                square2Music.mute = true;
+                break;
+            case "third":
+                triangleMusic.mute = true;
+                break;
+            case "fourth":
+                noiseMusic.mute = true;
+                break;
+        }
+     }
+
+     public static void UnmuteChannel(string channel){
+        switch(channel){
+            case "first":
+                square1Music.mute = false;
+                break;
+            case "second":
+                square2Music.mute = false;
+                break;
+            case "third":
+                triangleMusic.mute = false;
+                break;
+            case "fourth":
+                noiseMusic.mute = false;
+                break;
+        }
      }
 
      public void MinMaxPitch(SoundWave wave){
@@ -126,9 +158,6 @@ public class MusicAnalyzer : MonoBehaviour {
             wave.maxPitch = newPitch;
         }
      }
-     
-     
-     public Text square1Text, square2Text, triangleText, noiseText;
 
      public void AnalyzeAllChannels(){
         AnalyzeSound(square1);
@@ -165,11 +194,7 @@ public class MusicAnalyzer : MonoBehaviour {
      }
      
      void  Update (){
-         AnalyzeAllChannels();
-         square1Text.text = square1.pitch.ToString("F0")+" Hz";
-         square2Text.text = square2.pitch.ToString("F0")+" Hz";
-         triangleText.text = triangle.pitch.ToString("F0")+" Hz";
-         noiseText.text = noise.pitch.ToString("F0")+" Hz";     
+         AnalyzeAllChannels();   
      }
 
 }

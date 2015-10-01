@@ -37,38 +37,42 @@ public class UserController : MonoBehaviour {
 
        //jumping
        if (firstJump && !firstChannel.IsInfected()){
+          if(!firstChannel.RunnerIsJumping()){
+            MusicMiddleware.playSound("Square Jump 1");
+          }
           firstChannel.RunnerJump();
-          MusicMiddleware.playSound("Square Jump 1");
        }
        if (secondJump && !secondChannel.IsInfected()){
+          if(!secondChannel.RunnerIsJumping()){
+            MusicMiddleware.playSound("Square Jump 2");
+          }
           secondChannel.RunnerJump();
-          MusicMiddleware.playSound("Square Jump 2");
        }
        if (thirdJump && !thirdChannel.IsInfected()){
+          if(!thirdChannel.RunnerIsJumping()){
+            MusicMiddleware.playSound("Triangle Jump");
+          }
           thirdChannel.RunnerJump();
-          MusicMiddleware.playSound("Triangle Jump");
        }
        if (fourthJump && !fourthChannel.IsInfected()){
+          if(!fourthChannel.RunnerIsJumping()){
+            MusicMiddleware.playSound("Noise Jump");
+          }
           fourthChannel.RunnerJump();
-          MusicMiddleware.playSound("Noise Jump");
        }
 
        //shooting
        if (firstShoot && !firstChannel.IsInfected()){
           firstChannel.RunnerShoot();
-          MusicMiddleware.playSound("Square Shot 1");
        }
        if (secondShoot && !secondChannel.IsInfected()){
           secondChannel.RunnerShoot();
-          MusicMiddleware.playSound("Square Shot 2");
        }
        if (thirdShoot && !thirdChannel.IsInfected()){
           thirdChannel.RunnerShoot();
-          MusicMiddleware.playSound("Triangle Shot");
        }
        if (fourthShoot && !fourthChannel.IsInfected()){
           fourthChannel.RunnerShoot();
-          MusicMiddleware.playSound("Noise Shot");
        }
 
        //infecting

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using System.Collections;
 
 public class Metronome : MonoBehaviour {
@@ -31,7 +32,6 @@ public class Metronome : MonoBehaviour {
 	}
 
     void Start(){
-        Debug.Log("Metronome Start");
         StartCoroutine(WaitForFirstNote());
     }
 	
@@ -48,7 +48,6 @@ public class Metronome : MonoBehaviour {
     }
 
     IEnumerator WaitForFirstNote(){
-        Debug.Log("First note will start in " + beat + " seconds");
         yield return new WaitForSeconds(beat);
         StartFakeMusic();
     }
@@ -78,20 +77,23 @@ public class Metronome : MonoBehaviour {
     }
 
     private void SpawnRandomEnemy(){
-        int channel = Random.Range(1, 4);
-        int position = Random.Range(1, 3);
-        // int position = 2;
+        List<int> possibilities = ChannelManager.ChannelPossibilities();
+        int index = Random.Range(0, possibilities.Count);
+
+        int channel = possibilities[index];
+        // int position = Random.Range(1, 3);
+        int position = 2;
         switch(channel){
-            case 1:
+            case 0:
                 firstChannel.SpawnEnemy(position);
                 break;
-            case 2:
+            case 1:
                 secondChannel.SpawnEnemy(position);
                 break;
-            case 3:
+            case 2:
                 thirdChannel.SpawnEnemy(position);
                 break;
-            case 4:
+            case 3:
                 fourthChannel.SpawnEnemy(position);
                 break;
         }

@@ -14,7 +14,6 @@ public class Sheet : MonoBehaviour {
     public float enemySpawnWeight = 2f;
     public int secondsToWait = 1;
 
-    public bool fuck = true;
     public GameObject musicAnalyzer;
 
     public List<IndexedNote> notes;
@@ -22,12 +21,10 @@ public class Sheet : MonoBehaviour {
     private int lastBeat;
     private MusicAnalyzer analyzer;
 
-	// Use this for initialization
 	void Start () {
         analyzer = musicAnalyzer.GetComponent<MusicAnalyzer>() as MusicAnalyzer;
 	}
 	
-	// Update is called once per frame
 	void Update () {
 	}
 
@@ -56,12 +53,10 @@ public class Sheet : MonoBehaviour {
     }
 
     private void AddFakeNoteToList(){
-        if(fuck){
-            IndexedNote newNote = new IndexedNote();
-            newNote.beatNumber = GenerateBeatNumber(NextGaussianFloat());
-            newNote.note = GenerateNote(NextGaussianFloat());
-            notes.Add(newNote);
-        }
+        IndexedNote newNote = new IndexedNote();
+        newNote.beatNumber = GenerateBeatNumber(NextGaussianFloat());
+        newNote.note = GenerateNote(NextGaussianFloat());
+        notes.Add(newNote);
     }
 
     private static float NextGaussianFloat(){
@@ -154,7 +149,6 @@ public class Sheet : MonoBehaviour {
         }
         note = IncludeHurdlesFromArray(note, possibilities, possibilities.Count);
         numberOfNotes -= possibilities.Count;
-        // possibilities = possibilities.Except(ChannelManager.ChannelPossibilities());
         possibilities = FuckYou(ChannelManager.ChannelPossibilities(), possibilities);
         return IncludeHurdlesFromArray(note, possibilities, numberOfNotes);
 
@@ -195,7 +189,7 @@ public class Sheet : MonoBehaviour {
 
 
     private bool ShouldAnEnemySpawn(float gauss){
-        return Mathf.Abs(gauss) > enemySpawnWeight;
+        return Mathf.Abs(gauss) < enemySpawnWeight;
     }
 
     public void SetBeatNumberWeight(float weight){

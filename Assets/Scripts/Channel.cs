@@ -44,6 +44,8 @@ public class Channel : MonoBehaviour {
        rightController.SetUpLane(rightLane.GetComponent<Renderer>().material.GetColor("_EmissionColor"), flashingColor, cycleTime);
 
        laneColor = leftLane.GetComponent<Renderer>().material.GetColor("_EmissionColor");
+
+       runnerController.SetShotNoise(TheNoise());
 	}
 	
 	// Update is called once per frame
@@ -57,11 +59,31 @@ public class Channel : MonoBehaviour {
         }
     }
 
+    private string TheNoise(){
+        switch(channel){
+            case "first":
+                return "Square Shot 1";
+            case "second":
+                return "Square Shot 2";
+            case "third":
+                return "Triangle Shot";
+            case "fourth":
+                return "Noise Shot";
+            default: 
+                return "fuck";
+        }
+    }
+
+    public bool RunnerIsJumping(){
+        return runnerController.IsJumping();
+    }
+
     public bool IsInfected(){
         return infected;
     }
 
     public void BecomeInfected(){
+        MusicAnalyzer.MuteChannel(channel);
         infected = true;
         healing = false;
         recoveryTime = Time.time + infectionLength;
@@ -102,6 +124,8 @@ public class Channel : MonoBehaviour {
         leftController.SetInfected(false);
         middleController.SetInfected(false);
         rightController.SetInfected(false);
+
+        MusicAnalyzer.UnmuteChannel(channel);
     }
 
     public void RunnerJump(){
